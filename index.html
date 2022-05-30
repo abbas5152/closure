@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    #box{
+        height:200px;
+        width:205px;
+        border:solid 1px black;
+        overflow:scroll;
+
+    }
+    #details{
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        grid-template-rows: repeat(50,auto);
+    }
+</style>
+</head>
+<body>
+    <input  oninput=" debounce(myfunction,1000)" type="text" id="mv">
+    <button>Search Movie</button>
+    <div id="box">
+
+    </div>
+    <div id="details">
+
+    </div>
+</body>
+</html>
+<script>
+    let id;
+     async function movies(q){
+        var url=`http://www.omdbapi.com/?s=${q}&apikey=6e066e2a`
+        var res= await fetch(url);
+        var data=await res.json()
+        return (data.Search)
+     }
+     function append(m){
+        
+         
+             var d= document.querySelector("div")
+             d.innerHTML=null
+             if(m==undefined){
+                 return false
+             }
+             else{
+                 m.forEach(function(el){
+                    var movie=document.createElement("h4")
+                     movie.innerText=el.Title
+                    
+
+                      d.append(movie)
+
+                 })
+           
+
+             }
+     }
+     async function myfunction(){
+        
+       var a= document.querySelector("#mv").value;
+    //    console.log(a)
+       var res= await movies(a)
+       var dat= await res
+       console.log(dat)
+       
+       append(dat)
+        
+
+    }
+    function debounce(func,delay){
+        if(id){
+            clearTimeout(id);
+        }
+        
+            id=setTimeout(function(){
+                func();
+            },delay)
+        
+    }
+    document.querySelector("#box").addEventListener("click",async function(){
+        console.log("clicked")
+        var q=document.querySelector("#details")
+        
+         var a= document.querySelector("#mv").value;
+    //    console.log(a)
+       var res= await movies(a)
+       var dat= await res
+          dat.forEach(function(el){
+              var r=document.createElement("div")
+              q.innerHTML=null
+             
+            var p=document.createElement("p")
+            p.innerText=el.Title
+            var poster= document.createElement("img")
+              poster.src=el.Poster
+           var i=document.createElement("p")
+            i.innerText=el.imdbID
+            var y=document.createElement("p")
+            y.innerText=el.Year
+            
+        r.append(p,poster,i,y)
+        q.append(r)
+       
+       
+          })
+        
+          
+    })
+   
+</script>
